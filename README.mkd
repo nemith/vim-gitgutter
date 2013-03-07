@@ -1,8 +1,8 @@
-## Vim Git Gutter
+## Vim VCS Gutter
 
-A Vim plugin which shows a git diff in the 'gutter' (sign column).  It shows whether each line has been added, modified, and where lines have been removed.
+A Vim plugin which shows a git/mercurial diff in the 'gutter' (sign column).  It shows whether each line has been added, modified, and where lines have been removed.
 
-This is a port of the [Git Gutter][st2gg] plugin for Sublime Text 2.
+This is a fork of the [vim-gitgutter][vimgg] plugin, itself a port of the [Git Gutter][st2gg] plugin for Sublime Text 2.
 
 
 ### Screenshot
@@ -92,6 +92,7 @@ You can read reviews at PeepCode and also on my [portfolio][].
 Copyright Andrew Stewart, AirBlade Software Ltd.  Released under the MIT licence.
 
 
+  [vimgg]: https://github.com/airblade/vim-gitgutter
   [st2gg]: https://github.com/jisaacks/GitGutter
   [pathogen]: https://github.com/tpope/vim-pathogen
   [qf]: https://github.com/tomtom/quickfixsigns_vim
