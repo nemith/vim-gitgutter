@@ -5,8 +5,12 @@ let g:loaded_gitgutter = 1
 
 " Initialisation {{{
 
-if !exists('g:gitgutter_enabled')
-  let g:gitgutter_enabled = 1
+if !exists('g:gitgutter_enabled') 
+  if !has('windows')
+    let g:gitgutter_enabled = 1
+  else
+    let g:gitgutter_enabled = 0
+  endif
 endif
 
 if !exists('g:gitgutter_highlights')
