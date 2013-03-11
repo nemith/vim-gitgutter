@@ -113,7 +113,7 @@ function! s:is_tracked_by_git()
     let cmd = 'git ls-files --error-unmatch > /dev/null 2>&1 ' . shellescape(s:current_file())
     call system(s:command_in_directory_of_current_file(cmd))
   elseif (s:vcs == 'hg')
-    let cmd = 'hg status' . shellescape(s:current_file()) . ' | grep -e "^M " >/dev/null 2>&1' 
+    let cmd = 'hg status ' . shellescape(s:current_file()) . ' | grep -e "^M " >/dev/null 2>&1' 
     call system(s:command_in_directory_of_current_file(cmd))
   endif
 
