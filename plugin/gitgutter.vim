@@ -6,7 +6,7 @@ let g:loaded_gitgutter = 1
 " Initialisation {{{
 
 if !exists('g:gitgutter_enabled') 
-  if !has('windows')
+  if !has('win32')
     let g:gitgutter_enabled = 1
   else
     let g:gitgutter_enabled = 0
