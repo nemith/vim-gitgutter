@@ -25,24 +25,29 @@ cd ~/.vim/bundle
 git clone git://github.com/airblade/vim-gitgutter.git
 ```
 
+Or for [Vundle](https://github.com/gmarik/vundle) users:
+
+Add `Bundle 'airblade/vim-gitgutter'` to your `~/.vimrc` and then:
+
+* either within Vim: `:BundleInstall`
+* or in your shell: `vim +BundleInstall +qall`
+
 
 ### Usage
 
 You don't have to do anything: it just works.
 
-If you want vim-gitgutter off by default, add `let g:gitgutter_enabled = 0` to your `~/.vimrc`.
+You can explicitly turn vim-gitgutter off and on (defaults to on):
 
-You can explicitly turn vim-gitgutter off and on:
-
-* turn off with `:DisableGitGutter`
-* turn on with `:EnableGitGutter`
-* toggle with `:ToggleGitGutter`.
+* turn off with `:GitGutterDisable`
+* turn on with `:GitGutterEnable`
+* toggle with `:GitGutterToggle`.
 
 And you can turn line highlighting on and off (defaults to off):
 
-* turn on with `:EnableGitGutterLineHighlights`
-* turn off with `:DisableGitGutterLineHighlights`
-* toggle with `:ToggleGitGutterLineHighlights`.
+* turn on with `:GitGutterLineHighlightsEnable`
+* turn off with `:GitGutterLineHighlightsDisable`
+* toggle with `:GitGutterLineHighlightsToggle`.
 
 Furthermore you can jump between hunks:
 
@@ -51,18 +56,80 @@ Furthermore you can jump between hunks:
 
 You may want to add mappings for these if you use them often.
 
-If you want to define your own highlights, you can turn off vim-gitgutter's with `let g:gitgutter_highlights = 0` in your `~/.vimrc`.
+See the customisation section below for how to change the defaults.
+
+
+### Customisation
+
+You can customise:
+
+* The sign column's colours
+* The signs' colours
+* Line highlights
+* Whether or not vim-gitgutter is on initially (defaults to on)
+* Whether or not line highlighting is on initially (defaults to off)
+
+Please note that vim-gitgutter won't override any colours or highlights you've set in your colorscheme.
+
+
+#### Sign column
+
+The background colour of the sign column is controlled by the `SignColumn` highlight group.  This will be either set in your colorscheme or Vim's default.
+
+To find out where it's set, and to what it's set, use `:verbose highlight SignColumn`.
+
+If your `SignColumn` is not set (`:highlight SignColumn` gives you `SignColumn xxx cleared`), vim-gitgutter will set it to the same as your line number column (i.e. the `LineNr` highlight group).
+
+To change your sign column's appearance, update your colorscheme or `~/.vimrc` like this:
+
+* For the same appearance as your line number column: `highlight clear SignColumn`
+* For a specific appearance on terminal Vim: `highlight SignColumn ctermbg=whatever`
+* For a specific appearance on gVim/MacVim: `highlight SignColumn guibg=whatever`
+
+
+#### Signs' colours
+
+To customise these, set up the following highlight groups in your colorscheme or `~/.vimrc`:
+
+```
+GitGutterAdd          " an added line
+GitGutterChange       " a changed line
+GitGutterDelete       " at least one removed line
+GitGutterChangeDelete " a changed line followed by at least one removed line
+```
+
+You can either set these with `highlight GitGutterAdd {key}={arg}...` or link them to existing highlight groups with, say, `highlight link GitGutterAdd DiffAdd`.
+
+#### Line highlights
+
+Similarly to the signs' colours, set up the following highlight groups in your colorscheme or `~/.vimrc`:
+
+```
+GitGutterAddLine          " default: links to DiffAdd
+GitGutterChangeLine       " default: links to DiffChange
+GitGutterDeleteLine       " default: links to DiffDelete
+GitGutterChangeDeleteLine " default: links to GitGutterChangeLineDefault, i.e. DiffChange
+```
+
+#### To turn off vim-gitgutter by default
+
+Add `let g:gitgutter_enabled = 0` to your `~/.vimrc`.
+
+
+#### To turn on line highlighting by default
+
+Add `let g:gitgutter_highlight_lines = 1` to your `~/.vimrc`.
 
 
 ### FAQ
 
-> The colours in the sign column are weird.
+> Why are the colours in the sign column weird?
 
-The syntax highlighting for your sign column is probably set strangely.  Either modify your colorscheme or add this to your `~/.vimrc`:
+Your colorscheme is configuring the `SignColumn` highlight group weirdly.  Please see the section above on customising the sign column.
 
-```
-highlight clear SignColumn
-```
+> Why is no sign shown if I delete the first line(s) in a file?
+
+vim-gitgutter shows removed lines with a sign on the line above.  In this case there isn't a line above so vim-gitgutter can't show the sign.
 
 > What happens if I also use another plugin which uses signs (e.g. Syntastic)?
 
@@ -71,9 +138,28 @@ Vim only allows one sign per line.  Before adding a sign to a line, vim-gitgutte
 
 ### Alternatives
 
-I'm not aware of any other Vim plugins which (only) show git diffs in the gutter.  However these may be of interest:
+Related:
 
-* [quickfixsigns_vim][qf] has a large superset of this functionality.
+* [textobj-gitgutter][togg] (lets you treat diff hunks as text objects)
+* [vim-gitgutter][mercurial] - Mercurial fork
+
+Vim alternatives:
+
+* [git-gutter-vim][ggv]
+* [vim-git-inline-diff][vgid]
+* [quickfixsigns_vim][qf] (a superset of this functionality)
+* [iwilldiffer][iwd]
+* [svndiff][svndiff]
+* [sign-diff][signdiff]
+* [changesPlugin][changes]
+
+Other editors:
+
+* [Git Gutter][st2gg] for Sublime Text 2
+* [git-gutter.el][gge] for Emacs
+
+Also, this may be of interest:
+
 * [fugitive.vim][fugitive] is a full-on Git wrapper.  It doesn't show git diffs in the gutter (ha!) but it does a bazillion other git things.
 
 
@@ -100,4 +186,12 @@ Copyright Andrew Stewart, AirBlade Software Ltd.  Released under the MIT licence
   [siv1]: https://peepcode.com/products/smash-into-vim-i
   [siv2]: https://peepcode.com/products/smash-into-vim-ii
   [portfolio]: http://airbladesoftware.com/portfolio#vim
-
+  [vgid]: https://github.com/luxflux/vim-git-inline-diff
+  [gge]: https://github.com/syohex/emacs-git-gutter
+  [iwd]: https://bitbucket.org/sirpengi/iwilldiffer
+  [svndiff]: http://www.vim.org/scripts/script.php?script_id=1881
+  [signdiff]: http://www.vim.org/scripts/script.php?script_id=2712
+  [changes]: http://www.vim.org/scripts/script.php?script_id=3052
+  [ggv]: https://github.com/akiomik/git-gutter-vim
+  [togg]:https://github.com/gilligan/textobj-gitgutter
+  [mercurial]: https://github.com/safetydank/vim-gitgutter
