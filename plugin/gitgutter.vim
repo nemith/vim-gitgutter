@@ -29,8 +29,7 @@ call s:set('g:gitgutter_signs',                 1)
 call s:set('g:gitgutter_highlight_lines',       0)
 let s:highlight_lines = g:gitgutter_highlight_lines
 call s:set('g:gitgutter_sign_column_always',    0)
-call s:set('g:gitgutter_on_bufenter',           1)
-call s:set('g:gitgutter_all_on_focusgained',    1)
+call s:set('g:gitgutter_eager' ,                1)
 call s:set('g:gitgutter_sign_added',            '+')
 call s:set('g:gitgutter_sign_modified',         '~')
 call s:set('g:gitgutter_sign_removed',          '_')
@@ -143,10 +142,6 @@ endfunction
 
 function! s:snake_case_to_camel_case(text)
   return substitute(a:text, '\v(.)(\a+)(_(.)(.+))?', '\u\1\l\2\u\4\l\5', '')
-endfunction
-
-function! s:buffers()
-  return filter(range(1, bufnr('$')), 'buflisted(v:val)')
 endfunction
 
 " }}}
@@ -431,7 +426,9 @@ function! s:add_dummy_sign()
 endfunction
 
 function! s:remove_dummy_sign()
-  exe ":sign unplace" s:dummy_sign_id "file=" . s:file()
+  if exists('s:dummy_sign_id')
+    exe ":sign unplace" s:dummy_sign_id "file=" . s:file()
+  endif
 endfunction
 
 " }}}
@@ -439,8 +436,7 @@ endfunction
 " Public interface {{{
 
 function! GitGutterAll()
-  let buffer_ids = g:gitgutter_on_bufenter ? tabpagebuflist() : s:buffers()
-  for buffer_id in buffer_ids
+  for buffer_id in tabpagebuflist() 
     call GitGutter(expand('#' . buffer_id . ':p'))
   endfor
 endfunction
@@ -564,18 +560,24 @@ function! GitGutterGetHunks()
   return s:is_active() ? s:hunks : []
 endfunction
 
+nnoremap <silent> <Plug>GitGutterNextHunk :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
+nnoremap <silent> <Plug>GitGutterPrevHunk :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
+
+if !hasmapto('<Plug>GitGutterNextHunk') && maparg(']h', 'n') ==# ''
+  nmap ]h <Plug>GitGutterNextHunk
+  nmap [h <Plug>GitGutterPrevHunk
+endif
+
 augroup gitgutter
   autocmd!
-  if g:gitgutter_on_bufenter
-    autocmd BufEnter,BufWritePost,FileWritePost * call GitGutter(expand('<afile>'))
-  else
-    autocmd BufReadPost,BufWritePost,FileReadPost,FileWritePost * call GitGutter(expand('<afile>'))
-  endif
-  if g:gitgutter_all_on_focusgained
+  if g:gitgutter_eager
+    autocmd BufEnter,BufWritePost,FileWritePost * call GitGutter(s:current_file())
+    autocmd TabEnter * call GitGutterAll()
     if !has('gui_win32')
       autocmd FocusGained * call GitGutterAll()
     endif
-    autocmd TabEnter * call GitGutterAll()
+  else
+    autocmd BufReadPost,BufWritePost,FileReadPost,FileWritePost * call GitGutter(s:current_file())
   endif
   autocmd ColorScheme * call s:define_sign_column_highlight() | call s:define_highlights()
 augroup END
