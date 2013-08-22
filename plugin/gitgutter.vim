@@ -29,7 +29,7 @@ call s:set('g:gitgutter_signs',                 1)
 call s:set('g:gitgutter_highlight_lines',       0)
 let s:highlight_lines = g:gitgutter_highlight_lines
 call s:set('g:gitgutter_sign_column_always',    0)
-call s:set('g:gitgutter_realtime',              0)
+call s:set('g:gitgutter_realtime',              1)
 call s:set('g:gitgutter_eager',                 1)
 call s:set('g:gitgutter_sign_added',            '+')
 call s:set('g:gitgutter_sign_modified',         '~')
@@ -242,7 +242,7 @@ function! s:run_diff(realtime)
       let cmd = 'git diff --no-ext-diff --no-color -U0 ' . g:gitgutter_diff_args . ' ' . shellescape(s:file())
     endif
   elseif (s:vcs == 'hg')
-    let cmd = 'hg diff -U0 ' . shellescape(s:current_file())
+    let cmd = 'hg diff -U0 ' . g:gitgutter_diff_args . ' ' . shellescape(s:current_file())
   endif
   if s:grep_available
     let cmd .= s:grep_command
